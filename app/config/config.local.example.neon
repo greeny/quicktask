@@ -1,0 +1,7 @@
+doctrine:
+    user: root
+    password:
+    dbname: quicktask
+
+    console:
+        url: http://quicktask.local/
