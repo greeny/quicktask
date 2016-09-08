@@ -1,22 +1,22 @@
 {block content}
-    {control insertTaskForm}
-    <div class="row">
-        <div class="col-md-12">
-            {snippet tasks}
-                <ul class="list-group">
-                    {foreach $tasks as $task}
-                        <li class="list-group-item">
-                            {control 'completeTaskForm-' . $task->getId()}
-                        </li>
-                    {/foreach}
-                </ul>
-            {/snippet}
-        </div>
-    </div>
+	{control insertTaskForm}
+	<div class="row">
+		<div class="col-md-12">
+			{snippet tasks}
+				<ul class="list-group">
+					{foreach $tasks as $task}
+						<li class="list-group-item">
+							{control 'completeTaskForm-' . $task->getId()}
+						</li>
+					{/foreach}
+				</ul>
+			{/snippet}
+		</div>
+	</div>
 {/block}
 
 {block scripts}
-    {include parent}
+	{include parent}
 {/block}
 
 {block head}
