@@ -17,10 +17,14 @@ session:
 
 services:
     router: App\RouterFactory::createRouter
+
+    - App\Factories\Form\ICompleteTaskFormFactory
+    - App\Factories\Form\IInsertTaskFactory
+
+    - App\Factories\Modal\IInsertTaskGroupFactory
+
     - App\Model\Repository\TaskGroupRepository
     - App\Model\Repository\TaskRepository
-    - App\Factories\Modal\IInsertTaskGroupFactory
-    - App\Factories\Form\IInsertTaskFactory
 
 extensions:
     console: Kdyby\Console\DI\ConsoleExtension
