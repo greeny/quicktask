@@ -19,6 +19,7 @@ services:
     router: App\RouterFactory::createRouter
 
     - App\Factories\Form\ICompleteTaskFormFactory
+    - App\Factories\Form\IFilterTaskFormFactory
     - App\Factories\Form\IInsertTaskFormFactory
 
     - App\Factories\Modal\IInsertTaskGroupFactory

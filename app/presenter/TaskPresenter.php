@@ -2,6 +2,7 @@
 namespace App\Presenters;
 
 use App\Factories\Form\ICompleteTaskFormFactory;
+use App\Factories\Form\IFilterTaskFormFactory;
 use App\Factories\Form\IInsertTaskFormFactory;
 use App\Model\Entity\Task;
 use App\Model\Entity\TaskGroup;
@@ -29,8 +30,14 @@ class TaskPresenter extends BasePresenter
 	/** @var ICompleteTaskFormFactory @inject */
 	public $completeTaskFormFactory;
 
+	/** @var IFilterTaskFormFactory @inject */
+	public $filterTaskFormFactory;
+
 	/** @var IInsertTaskFormFactory @inject */
 	public $insertTaskFormFactory;
+
+	/** @var string @persistent */
+	public $filterName;
 
 	/** @var TaskGroup */
 	private $taskGroup;
@@ -62,7 +69,7 @@ class TaskPresenter extends BasePresenter
 	public function actionTaskGroup($idTaskGroup)
 	{
 		$this->taskGroup = $this->taskGroupRepository->getById($idTaskGroup);
-		$this->tasks = $this->getTasks($this->taskGroup);
+		$this->updateTasks();
 	}
 
 
@@ -93,8 +100,8 @@ class TaskPresenter extends BasePresenter
 		$form = $this->insertTaskFormFactory->create($this->taskGroup);
 		$form->onSuccess[] = function (Form $form, $values) {
 			$this->flashMessage('Task \'' . $values->name . '\' was created', 'success');
-			$this->tasks = $this->getTasks($this->taskGroup);
 			if ($this->isAjax()) {
+				$this->updateTasks();
 				$this->redrawControl('content');
 			} else {
 				$this->redirect('this');
@@ -122,6 +129,23 @@ class TaskPresenter extends BasePresenter
 	}
 
 
+	protected function createComponentFilterTaskForm()
+	{
+		$form = $this->filterTaskFormFactory->create();
+		$form->getForm()['search']->setValue($this->filterName);
+		$form->onSuccess[] = function ($form, $values) {
+			if ($this->isAjax()) {
+				$this->filterName = $values->search;
+				$this->updateTasks();
+				$this->redrawControl('content');
+			} else {
+				$this->redirect('this', ['filterName' => $values->search]);
+			}
+		};
+		return $form;
+	}
+
+
 	/**
 	 * @return array
 	 */
@@ -139,13 +163,9 @@ class TaskPresenter extends BasePresenter
 	}
 
 
-	/**
-	 * @param TaskGroup $taskGroup
-	 * @return Task[]
-	 */
-	protected function getTasks(TaskGroup $taskGroup)
+	protected function updateTasks()
 	{
-		return $this->taskRepository->getByTaskGroup($taskGroup);
+		$this->tasks = $this->taskRepository->getByTaskGroup($this->taskGroup, $this->filterName);
 	}
 
 

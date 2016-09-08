@@ -1,4 +1,20 @@
 $(document).ready(function () {
+
+	function debounce(func, wait, immediate) {
+		var timeout;
+		return function () {
+			var context = this, args = arguments;
+			var later = function () {
+				timeout = null;
+				if (!immediate) func.apply(context, args);
+			};
+			var callNow = immediate && !timeout;
+			clearTimeout(timeout);
+			timeout = setTimeout(later, wait);
+			if (callNow) func.apply(context, args);
+		};
+	}
+
 	$.nette.ext('on', {}, {
 		before: function (callback) {
 			this.ext('snippets').before($.proxy(function ($el) {
@@ -30,9 +46,15 @@ $(document).ready(function () {
 			$(this).parents('form').submit();
 		});
 
+		$el.find('.js-submit-on-change').on('input', debounce(function () {
+			$(this).parents('form').submit();
+		}, 500));
+
 		$el.find('.datepicker').datepicker({
 			orientation: 'left bottom'
 		});
+
+		$el.find('.js-autofocus').focus();
 	});
 
 	$.nette.init();

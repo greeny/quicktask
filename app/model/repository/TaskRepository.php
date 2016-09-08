@@ -25,13 +25,22 @@ class TaskRepository extends AbstractRepository
     }
 
     /**
-     * @param TaskGroup $taskGroup
+     * @param Entity\TaskGroup $taskGroup
      * @return Entity\Task[]
      */
-    public function getByTaskGroup(Entity\TaskGroup $taskGroup, $order = TRUE)
+    public function getByTaskGroup(Entity\TaskGroup $taskGroup, $filterName = NULL, $order = TRUE)
     {
-    	$order = $order ? ['date' => 'DESC'] : [];
-        return $this->task->findBy(['taskGroup' => $taskGroup], $order);
+    	$queryBuilder = $this->task->createQueryBuilder('t');
+    	$queryBuilder->andWhere('t.taskGroup = :taskGroup');
+    	$queryBuilder->setParameter('taskGroup', $taskGroup);
+    	if ($order) {
+    		$queryBuilder->orderBy('t.date', 'DESC');
+	    }
+	    if ($filterName) {
+    		$queryBuilder->andWhere($queryBuilder->expr()->like('t.name', ':name'));
+    		$queryBuilder->setParameter('name', '%' . $this->escapeLikeArg($filterName) . '%');
+	    }
+	    return $queryBuilder->getQuery()->getResult();
     }
 
     /**
