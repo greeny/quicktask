@@ -5,40 +5,41 @@
 parameters:
 
 php:
-    date.timezone: Europe/Prague
+	date.timezone: Europe/Prague
 
 application:
-    errorPresenter: Error
-    mapping:
-        *: App\*Module\Presenters\*Presenter
+	errorPresenter: Error
+	mapping:
+		*: App\*Module\Presenters\*Presenter
 
 session:
-    expiration: 14 days
+	expiration: 14 days
 
 services:
-    router: App\RouterFactory::createRouter
+	router: App\RouterFactory::createRouter
 
-    - App\Factories\Form\ICompleteTaskFormFactory
-    - App\Factories\Form\IFilterTaskFormFactory
-    - App\Factories\Form\IInsertTaskFormFactory
+	- App\Factories\Form\ICompleteTaskFormFactory
+	- App\Factories\Form\IFilterTaskFormFactory
+	- App\Factories\Form\IInsertTaskFormFactory
 
-    - App\Factories\Modal\IInsertTaskGroupFactory
+	- App\Factories\Modal\IInsertTaskGroupFactory
 
-    - App\Model\Repository\TaskGroupRepository
-    - App\Model\Repository\TaskRepository
+	- App\Model\Repository\CategoryRepository
+	- App\Model\Repository\TaskGroupRepository
+	- App\Model\Repository\TaskRepository
 
 extensions:
-    console: Kdyby\Console\DI\ConsoleExtension
-    events: Kdyby\Events\DI\EventsExtension
-    annotations: Kdyby\Annotations\DI\AnnotationsExtension
-    doctrine: Kdyby\Doctrine\DI\OrmExtension
+	console: Kdyby\Console\DI\ConsoleExtension
+	events: Kdyby\Events\DI\EventsExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
+	doctrine: Kdyby\Doctrine\DI\OrmExtension
 
 doctrine:
-    user:
-    password:
-    dbname:
-    metadata:
-        App: %appDir%
+	user:
+	password:
+	dbname:
+	metadata:
+		App: %appDir%
 
-    console:
-        url: http://quicktask.com/
+	console:
+		url: http://quicktask.com/

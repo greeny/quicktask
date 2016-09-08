@@ -1,15 +1,29 @@
 {form form, class => ajax}
     <div class="row">
-        <div class="col-md-7">
+        <div class="col-md-8">
             <div class="form-group">
                 {label name /}
                 {input name, class => 'form-control'}
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="form-group">
                 {label date /}
                 {input date, class => 'form-control datepicker'}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="form-group">
+                {label category /}
+                {input category, class => 'form-control'}
+            </div>
+        </div>
+        <div class="col-md-5" id="customCategory" style="display: none;">
+            <div class="form-group">
+                {label customCategory /}
+                {input customCategory, class => 'form-control'}
             </div>
         </div>
         <div class="col-md-2">

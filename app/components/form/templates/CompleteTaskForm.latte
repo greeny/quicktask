@@ -2,6 +2,7 @@
 	<label>
 		<input class="js-submit-on-change" n:name="completed">
 		{$task->getName()}
+		<span n:if="$task->getCategory()" class="label label-success">{$task->getCategory()->getName()}</span>
 		<span class="label label-info">{$task->getDate()|date:'d.m.Y'}</span>
 	</label>
 </form>
