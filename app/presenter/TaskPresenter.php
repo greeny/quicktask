@@ -2,7 +2,10 @@
 namespace App\Presenters;
 
 use App\Factories\Form\ICompleteTaskFormFactory;
+use App\Factories\Form\IInsertTaskFormFactory;
 use App\Model\Entity\Task;
+use App\Model\Entity\TaskGroup;
+use Nette\Application\UI\Form;
 use Nette\Application\UI\Multiplier;
 
 
@@ -26,11 +29,11 @@ class TaskPresenter extends BasePresenter
 	/** @var ICompleteTaskFormFactory @inject */
 	public $completeTaskFormFactory;
 
-	/** @var \App\Factories\Form\IInsertTaskFactory @inject */
-	public $insertTaskFactory;
+	/** @var IInsertTaskFormFactory @inject */
+	public $insertTaskFormFactory;
 
-	/** @var number */
-	protected $idTaskGroup;
+	/** @var TaskGroup */
+	private $taskGroup;
 
 	/** @var Task[] */
 	private $tasks;
@@ -58,13 +61,16 @@ class TaskPresenter extends BasePresenter
 
 	public function actionTaskGroup($idTaskGroup)
 	{
-		$this->idTaskGroup = $idTaskGroup;
-		$this->tasks = $this->getTasks($idTaskGroup);
+		$this->taskGroup = $this->taskGroupRepository->getById($idTaskGroup);
+		$this->tasks = $this->getTasks($this->taskGroup);
 	}
 
 
 	public function renderTaskGroup()
 	{
+		if ($this->isAjax()) {
+			$this->redrawControl('content');
+		}
 		$this->template->tasks = $this->tasks;
 	}
 
@@ -80,23 +86,36 @@ class TaskPresenter extends BasePresenter
 
 
 	/**
-	 * @return \App\Components\Form\InsertTask
+	 * @return \App\Components\Form\InsertTaskForm
 	 */
 	protected function createComponentInsertTaskForm()
 	{
-		$control = $this->insertTaskFactory->create();
-		$control->setTaskGroupId($this->idTaskGroup);
-		return $control;
+		$form = $this->insertTaskFormFactory->create($this->taskGroup);
+		$form->onSuccess[] = function (Form $form, $values) {
+			$this->flashMessage('Task \'' . $values->name . '\' was created', 'success');
+			$this->tasks = $this->getTasks($this->taskGroup);
+			if ($this->isAjax()) {
+				$this->redrawControl('content');
+			} else {
+				$this->redirect('this');
+			}
+		};
+		return $form;
 	}
 
 
 	protected function createComponentCompleteTaskForm()
 	{
 		return new Multiplier(function ($id) {
-			$form = $this->completeTaskFormFactory->create($this->tasks[$id]);
-			$form->onSuccess[] = function ($form, $values) use ($id) {
-				$this->flashMessage('Task \'' . $this->tasks[$id]->getName() . '\' marked as ' . ($values->completed ? '' : 'not ') . 'completed.', 'success');
-				$this->redirect('this');
+			$task = $this->getTask($id);
+			$form = $this->completeTaskFormFactory->create($task);
+			$form->onSuccess[] = function ($form, $values) use ($task) {
+				$this->flashMessage('Task \'' . $task->getName() . '\' marked as ' . ($values->completed ? '' : 'not ') . 'completed.', 'success');
+				if ($this->isAjax()) {
+					$this->redrawControl('content');
+				} else {
+					$this->redirect('this');
+				}
 			};
 			return $form;
 		});
@@ -121,16 +140,32 @@ class TaskPresenter extends BasePresenter
 
 
 	/**
-	 * @param number $idTaskGroup
-	 * @return array
+	 * @param TaskGroup $taskGroup
+	 * @return Task[]
 	 */
-	protected function getTasks($idTaskGroup)
+	protected function getTasks(TaskGroup $taskGroup)
 	{
 		$result = [];
-		$tasks = $this->taskRepository->getByTaskGroup($idTaskGroup);
+		$tasks = $this->taskRepository->getByTaskGroup($taskGroup);
 		foreach ($tasks as $task) {
-			$result[$task->getId()] = $task;
+			$result[] = $task;
 		}
 		return $result;
+	}
+
+
+	/**
+	 * @param int $id
+	 * @return Task|NULL
+	 */
+	protected function getTask($id)
+	{
+		$task = NULL;
+		foreach ($this->tasks as $item) {
+			if ($item->getId() == $id) { // intentionally ==
+				$task = $item;
+			}
+		}
+		return $task;
 	}
 }
