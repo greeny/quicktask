@@ -4,3 +4,5 @@ composer.lock
 log/*
 vendor/*
 www/bower-plugins/*
+
+app/config/config.local.neon
