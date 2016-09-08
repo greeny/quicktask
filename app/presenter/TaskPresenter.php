@@ -145,12 +145,7 @@ class TaskPresenter extends BasePresenter
 	 */
 	protected function getTasks(TaskGroup $taskGroup)
 	{
-		$result = [];
-		$tasks = $this->taskRepository->getByTaskGroup($taskGroup);
-		foreach ($tasks as $task) {
-			$result[] = $task;
-		}
-		return $result;
+		return $this->taskRepository->getByTaskGroup($taskGroup);
 	}
 
 
