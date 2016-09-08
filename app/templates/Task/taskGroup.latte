@@ -6,9 +6,7 @@
                 <ul class="list-group">
                     {foreach $tasks as $task}
                         <li class="list-group-item">
-                            <input type="checkbox" />
-                            <span>{$task['name']}</span>
-                            <span class="label label-info">{$task['date']|date:'d.m.Y'}</span>
+                            {control 'completeTaskForm-' . $task->getId()}
                         </li>
                     {/foreach}
                 </ul>

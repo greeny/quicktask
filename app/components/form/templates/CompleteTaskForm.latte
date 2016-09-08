@@ -1,0 +1,7 @@
+{form form}
+	<label>
+		<input class="js-submit-on-change" n:name="completed">
+		{$task->getName()}
+		<span class="label label-info">{$task->getDate()|date:'d.m.Y'}</span>
+	</label>
+{/form}
