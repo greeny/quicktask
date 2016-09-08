@@ -1,11 +1,14 @@
-$(document).ready(function(){
-    $.nette.init();
+$(document).ready(function () {
+	$.nette.init();
 
-    $('.datepicker').datepicker({
-        orientation: 'left top'
-    });
+	$('.datepicker').datepicker({
+		orientation: 'left top'
+	});
 
-    $('.js-submit-on-change').on('change', function () {
-        $(this).parents('form').submit();
-    })
+	$('input[type=checkbox], input[type=radio]').iCheck({
+		checkboxClass: 'icheckbox_minimal-green',
+		radioClass: 'iradio_minimal-green'
+	}).on('ifChanged', function () {
+		$(this).parents('form').submit();
+	})
 });
