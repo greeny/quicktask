@@ -1,8 +1,11 @@
 <?php
 namespace App\Model\Entity;
 
-use Kdyby\Doctrine\Entities\BaseEntity;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Kdyby\Doctrine\Entities\Attributes\Identifier;
+use Kdyby\Doctrine\Entities\BaseEntity;
+
 
 /**
  * @ORM\Entity
@@ -10,106 +13,140 @@ use Doctrine\ORM\Mapping as ORM;
 class Task extends BaseEntity
 {
 
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue
-     */
-    protected $id;
+	use Identifier;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="TaskGroup")
-     * @ORM\JoinColumn(name="task_group_id", referencedColumnName="id", nullable=false)
-     */
-    protected $taskGroup;
+	/**
+	 * @var TaskGroup
+	 * @ORM\ManyToOne(targetEntity="TaskGroup")
+	 * @ORM\JoinColumn(nullable=FALSE)
+	 */
+	protected $taskGroup;
 
-    /**
-     * @ORM\Column(type="string")
-     */
-    protected $name;
+	/**
+	 * @var Category|NULL
+	 * @ORM\ManyToOne(targetEntity="Category", inversedBy="tasks", cascade={"persist"})
+	 */
+	private $category;
 
-    /**
-     * @ORM\Column(type="date", nullable=false)
-     */
-    protected $date;
+	/**
+	 * @var string
+	 * @ORM\Column(type="string")
+	 */
+	protected $name;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=false)
-     */
-    protected $completed = false;
+	/**
+	 * @var DateTime
+	 * @ORM\Column(type="date", nullable=FALSE)
+	 */
+	protected $date;
 
-    /**
-     * @return number
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
+	/**
+	 * @var bool
+	 * @ORM\Column(type="boolean", nullable=FALSE)
+	 */
+	protected $completed = FALSE;
 
-    /**
-     * @return TaskGroup
-     */
-    public function getTaskGroup()
-    {
-        return $this->taskGroup;
-    }
 
-    /**
-     * @param TaskGroup $taskGroup
-     */
-    public function setTaskGroup($taskGroup)
-    {
-        $this->taskGroup = $taskGroup;
-    }
+	/**
+	 * @return TaskGroup
+	 */
+	public function getTaskGroup()
+	{
+		return $this->taskGroup;
+	}
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
 
-    /**
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
+	/**
+	 * @param TaskGroup $taskGroup
+	 * @return $this
+	 */
+	public function setTaskGroup(TaskGroup $taskGroup)
+	{
+		$this->taskGroup = $taskGroup;
+		return $this;
+	}
 
-    /**
-     * @return string
-     */
-    public function getDate()
-    {
-        return $this->date;
-    }
 
-    /**
-     * @param string $date
-     */
-    public function setDate($date)
-    {
-        if (!$date instanceof \DateTime) {
-            $date = new \DateTime($date);
-        }
-        $this->date = $date;
-    }
+	/**
+	 * @return Category|NULL
+	 */
+	public function getCategory()
+	{
+		return $this->category;
+	}
 
-    /**
-     * @return bool
-     */
-    public function getCompleted()
-    {
-        return $this->completed;
-    }
 
-    /**
-     * @param bool $completed
-     */
-    public function setCompleted($completed)
-    {
-        $this->completed = $completed;
-    }
+	/**
+	 * @param Category|NULL $category
+	 * @return $this
+	 */
+	public function setCategory(Category $category = NULL)
+	{
+		$this->category = $category;
+		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @return $this
+	 */
+	public function setName($name)
+	{
+		$this->name = $name;
+		return $this;
+	}
+
+
+	/**
+	 * @return DateTime
+	 */
+	public function getDate()
+	{
+		return $this->date;
+	}
+
+
+	/**
+	 * @param DateTime|string $date
+	 * @return $this
+	 */
+	public function setDate($date)
+	{
+		if (!$date instanceof \DateTime) {
+			$date = new \DateTime($date);
+		}
+		$this->date = $date;
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getCompleted()
+	{
+		return $this->completed;
+	}
+
+
+	/**
+	 * @param bool $completed
+	 * @return $this
+	 */
+	public function setCompleted($completed)
+	{
+		$this->completed = $completed;
+		return $this;
+	}
+
 }
